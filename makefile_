@@ -1,0 +1,41 @@
+.PHONY: all clean
+
+CC = gcc \
+	-Wl,--subsystem,10 \
+	-e efi_main
+CFLAGS = \
+	-Ignu-efi/inc -Iinclude -fpic -ffreestanding -fno-stack-protector -fno-stack-check -fshort-wchar \
+	-mno-red-zone -maccumulate-outgoing-args
+# OBJFLAGS = \
+# 	-j .text -j .sdata -j .data -j .rodata -j .dynamic -j .dynsym \
+# 	-j .rel -j .rela -j .rel.* -j .rela.* -j .reloc \
+# 	--target efi-app-x86_64 --subsystem=10
+# LINKFLAGS = \
+# 	-shared -Bsymbolic -Lgnu-efi/x86_64/lib -Lgnu-efi/x86_64/gnuefi \
+# 	-Tgnu-efi/gnuefi/elf_x86_64_efi.lds gnu-efi/x86_64/gnuefi/crt0-efi-x86_64.o
+
+
+SRC = src/main.c
+# OBJ = build/main.o
+# SOBJ = build/main.so
+
+TARGET = BOOTX64.EFI
+
+all: $(TARGET)
+
+$(TARGET) : $(SRC)
+	$(CC) $(CFLAGS) -o $@ $<
+
+# $(TARGET) : $(SOBJ)
+# 	objcopy $(OBJFLAGS) $^ $@
+
+# $(SOBJ) : $(OBJ)
+# 	ld $(LINKFLAGS) $^ -o $@ -lgnuefi -lefi
+
+# $(OBJ) : $(SRC)
+# #	@mkdir -p $(dir $@)
+# 	@if not exist "$(subst /,\,$(dir $@))" mkdir "$(subst /,\,$(dir $@))"
+# 	$(CC) $(CFLAGS) -c $^ -o $@
+
+clean:
+	rm -rf build $(TARGET)
