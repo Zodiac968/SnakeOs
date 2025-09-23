@@ -1,12 +1,13 @@
 .POSIX:
 .PHONY: all clean
 
-SOURCE = src/main.c
+SOURCE := $(wildcard src/*.c)
+OBJS := $(SOURCE:.c=.o)
 TARGET = BOOTX64.EFI
 
 ifeq ($(OS), Windows_NT)
 QEMU = qemu.bat
-DISK_FLAGS = --vhd
+DISK_FLAGS = -ae /EFI/ VGA8.F16 --vhd
 else
 QEMU = ./qemu.sh
 DISK_FLAGS =
@@ -46,12 +47,16 @@ all: $(DISK_IMG_FOLDER)/$(DISK_IMG_PGM) $(TARGET)
 $(DISK_IMG_FOLDER)/$(DISK_IMG_PGM):
 	cd .$(DISK_IMG_FOLDER) && $(MAKE)
 
-$(TARGET): $(SOURCE)
-	$(CC) $(CFLAGS) -o $@ $<
+$(TARGET): $(OBJS)
+	$(CC) $(CFLAGS) -o $@ $^
 	copy $(TARGET) UEFI-GPT-image-creator/$(TARGET)
 	cd .$(DISK_IMG_FOLDER) && $(DISK_IMG_PGM) $(DISK_FLAGS)
 
+src/%.o: src/%.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
 clean:
+	cd ./src && del main.o && del utils.o && del terminal.o && del textRenderer.o
 	del $(TARGET)
 	cd .$(DISK_IMG_FOLDER) && del test.hdd
 	cd .$(DISK_IMG_FOLDER) && del test.vhd
