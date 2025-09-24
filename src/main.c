@@ -47,28 +47,30 @@ efi_main(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable)
         // }
         while (1)
         {
-                UpdateTerminal(framebuffer, SystemTable->ConIn);
+                UINTN status = UpdateTerminal(framebuffer, SystemTable->ConIn);
+                if (!status)
+                        break;
                 // for (volatile UINTN d = 0; d < 300000000; d++)
                 //         ;
                 // ind = (ind + 1) % 2;
         }
 
-        CHAR16 buf[128];
-        CHAR16 num[32];
+        // CHAR16 buf[128];
+        // CHAR16 num[32];
 
-        // Build "Resolution: <w>x<h>\r\n"
-        buf[0] = L'\0';
-        concat(buf, L"Resolution: ");
+        // // Build "Resolution: <w>x<h>\r\n"
+        // buf[0] = L'\0';
+        // concat(buf, L"Resolution: ");
 
-        utoa(gop->Mode->Info->HorizontalResolution, num);
-        concat(buf, num);
-        concat(buf, L"x");
-        utoa(gop->Mode->Info->VerticalResolution, num);
-        concat(buf, num);
-        concat(buf, L"\r\n");
+        // utoa(gop->Mode->Info->HorizontalResolution, num);
+        // concat(buf, num);
+        // concat(buf, L"x");
+        // utoa(gop->Mode->Info->VerticalResolution, num);
+        // concat(buf, num);
+        // concat(buf, L"\r\n");
 
-        // Print it
-        SystemTable->ConOut->OutputString(SystemTable->ConOut, buf);
+        // // Print it
+        // SystemTable->ConOut->OutputString(SystemTable->ConOut, buf);
 
         // Wait for key
         // EFI_INPUT_KEY key;

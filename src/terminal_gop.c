@@ -50,7 +50,7 @@ VOID DrawBorder(UINT32 *framebuffer, UINT32 color)
     draw_char(framebuffer, fb_width, winWidth + offset_x + 16, winHeight + offset_y + 16, &vgafont[188 * 16], color); // bottom right
 }
 
-VOID UpdateTerminal(UINT32 *framebuffer, EFI_SIMPLE_TEXT_INPUT_PROTOCOL *ci)
+UINTN UpdateTerminal(UINT32 *framebuffer, EFI_SIMPLE_TEXT_INPUT_PROTOCOL *ci)
 {
     UINT32 white = 0xFFFFFFFF;
     if (ci->ReadKeyStroke(ci, &key) == EFI_SUCCESS)
@@ -61,6 +61,10 @@ VOID UpdateTerminal(UINT32 *framebuffer, EFI_SIMPLE_TEXT_INPUT_PROTOCOL *ci)
             if (streq(terminalBuffer[cursor_y] + 4, L"snake"))
             {
                 concat(msg, L"Snake game is executed.");
+            }
+            else if (streq(terminalBuffer[cursor_y] + 4, L"exit"))
+            {
+                return 0;
             }
             else if (streq(terminalBuffer[cursor_y] + 4, L"clear"))
             {
@@ -122,8 +126,9 @@ VOID UpdateTerminal(UINT32 *framebuffer, EFI_SIMPLE_TEXT_INPUT_PROTOCOL *ci)
                 cursor_y++;
             }
         }
-    over:
     }
+over:
+    return 1;
 }
 
 VOID draw_line(UINT32 *framebuffer, UINTN grid_x, UINTN grid_y, const CHAR16 *str, UINT32 color)

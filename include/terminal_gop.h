@@ -17,7 +17,7 @@ extern UINTN cursor_x, cursor_y;
 
 VOID InitializeTerminal(UINT32 *framebuffer, UINTN terminal_width, UINTN terminal_height, UINTN width, UINTN height);
 VOID draw_line(UINT32 *framebuffer, UINTN grid_x, UINTN grid_y, const CHAR16 *str, UINT32 color);
-VOID UpdateTerminal(UINT32 *framebuffer, EFI_SIMPLE_TEXT_INPUT_PROTOCOL *ci);
+UINTN UpdateTerminal(UINT32 *framebuffer, EFI_SIMPLE_TEXT_INPUT_PROTOCOL *ci);
 VOID DrawBorder(UINT32 *framebuffer, UINT32 color);
 
 #endif
