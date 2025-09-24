@@ -11,15 +11,31 @@ void draw_char(UINT32 *framebuffer, UINTN fb_width, UINTN x, UINTN y, unsigned c
             { // MSB = leftmost pixel
                 framebuffer[(y + row) * fb_width + (x + col)] = color;
             }
+            else
+            {
+                framebuffer[(y + row) * fb_width + (x + col)] = 0x00000000;
+            }
         }
     }
 }
 
-void draw_string(UINT32 *framebuffer, UINTN fb_width, UINTN x, UINTN y, const char *str, UINT32 color)
+void draw_all_chars(UINT32 *framebuffer, UINTN fb_width, UINTN x, UINTN y, UINT32 color)
+{
+    for (int i = 0; i < 256; i++)
+    {
+        // 16 x 16 grid
+        UINTN x_offset = i % 16 * (10);
+        UINTN y_offset = i / 16 * (18);
+        unsigned char *glyph = &vgafont[i * 16];
+        draw_char(framebuffer, fb_width, x + x_offset, y + y_offset, glyph, color);
+    }
+}
+
+void draw_string(UINT32 *framebuffer, UINTN fb_width, UINTN x, UINTN y, const CHAR16 *str, UINT32 color)
 {
     while (*str)
     {
-        draw_char(framebuffer, fb_width, x, y, &vgafont[(unsigned char)*str * 16], color);
+        draw_char(framebuffer, fb_width, x, y, &vgafont[(unsigned char)(*str & 0xFF) * 16], color);
         x += 8; // next char
         str++;
     }

@@ -1,3 +1,8 @@
+double line:
+C9 CD BB
+BA    BA
+C8 CD BC
+
 EFI_STATUS load_font(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable,
                      UINT8 **fontBuffer)
 {

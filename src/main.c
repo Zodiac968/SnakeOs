@@ -1,7 +1,8 @@
 #include <efi.h>
 #include <utils.h>
-#include <terminal.h>
-#include <textRenderer.h>
+// #include <terminal.h>
+// #include <textRenderer.h>
+#include <terminal_gop.h>
 
 // ==== Function prototypes ====
 
@@ -24,7 +25,7 @@ efi_main(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable)
                 SystemTable->ConOut->OutputString(SystemTable->ConOut, L"Unable to locate GOP\r\n");
                 return Status;
         }
-
+        SystemTable->ConOut->ClearScreen(SystemTable->ConOut);
         // Get framebuffer(
         UINT32 *framebuffer = (UINT32 *)gop->Mode->FrameBufferBase;
         UINTN width = gop->Mode->Info->HorizontalResolution;
@@ -34,7 +35,8 @@ efi_main(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable)
         //  UINTN ind = 0;
 
         EFI_INPUT_KEY key;
-        // InitializeTerminal(SystemTable->ConOut, SystemTable->ConIn);
+        InitializeTerminal(framebuffer, 1000, 600, width, height);
+        DrawBorder(framebuffer, 0xFFFFFFFF);
         // for (UINTN y = 0; y < height; y++)
         // {
         //         for (UINTN x = 0; x < width; x++)
@@ -43,16 +45,13 @@ efi_main(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable)
         //                 terminal_border_draw(framebuffer, x, y, width, height, 10);
         //         }
         // }
-        // while (1)
-        // {
-        //         // UpdateTerminal();
-        draw_string(framebuffer, width, 50, 50, "Hello World", 0x00FF00); // green text
-        //         // for (volatile UINTN d = 0; d < 300000000; d++)
-        //         //         ;
-        //         // ind = (ind + 1) % 2;
-        // }
-
-        // Draw "Hello World" at (50, 50) in red
+        while (1)
+        {
+                UpdateTerminal(framebuffer, SystemTable->ConIn);
+                // for (volatile UINTN d = 0; d < 300000000; d++)
+                //         ;
+                // ind = (ind + 1) % 2;
+        }
 
         CHAR16 buf[128];
         CHAR16 num[32];
