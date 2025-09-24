@@ -173,13 +173,13 @@ typedef UINT64 EFI_VIRTUAL_ADDRESS;
 #define EFI_CRC_ERROR ENCODE_ERROR(27)
 
 #define MAX_EFI_ERROR 36
-static const CHAR16 *EFI_ERROR_STRINGS[MAX_EFI_ERROR] = {
-    [3] = u"EFI_UNSUPPORTED",
-    [5] = u"EFI_BUFFER_TOO_SMALL",
-    [7] = u"EFI_DEVICE_ERROR",
-    [14] = u"EFI_NOT_FOUND",
-    [27] = u"EFI_CRC_ERROR",
-};
+// static const CHAR16 *EFI_ERROR_STRINGS[MAX_EFI_ERROR] = {
+//     [3] = u"EFI_UNSUPPORTED",
+//     [5] = u"EFI_BUFFER_TOO_SMALL",
+//     [7] = u"EFI_DEVICE_ERROR",
+//     [14] = u"EFI_NOT_FOUND",
+//     [27] = u"EFI_CRC_ERROR",
+// };
 
 typedef struct _EFI_PCI_IO_PROTOCOL EFI_PCI_IO_PROTOCOL;
 
