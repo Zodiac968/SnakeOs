@@ -3,7 +3,7 @@
 // #include <terminal.h>
 // #include <textRenderer.h>
 #include <terminal_gop.h>
-
+#include <snake.h>
 // ==== Function prototypes ====
 
 EFI_STATUS
@@ -36,6 +36,8 @@ efi_main(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable)
 
         EFI_INPUT_KEY key;
         InitializeTerminal(framebuffer, 1000, 600, width, height);
+        // snakeInitialise(framebuffer, width, height);
+        
         DrawBorder(framebuffer, 0xFFFFFFFF);
         // for (UINTN y = 0; y < height; y++)
         // {
@@ -47,12 +49,19 @@ efi_main(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable)
         // }
         while (1)
         {
-                UINTN status = UpdateTerminal(framebuffer, SystemTable->ConIn);
-                if (!status)
-                        break;
-                // for (volatile UINTN d = 0; d < 300000000; d++)
-                //         ;
-                // ind = (ind + 1) % 2;
+                seed++;
+                if (runningSnake) {
+                        runningSnake = snakeUpdate(SystemTable->ConIn);
+                        for (volatile UINTN d = 0; d < 30000000; d++);
+                        if (!runningSnake) snakeClear();
+                        
+                } else {
+                        UINTN status = UpdateTerminal(framebuffer, SystemTable->ConIn);
+                        if (!status)
+                                break;
+                }
+                
+                
         }
 
         // CHAR16 buf[128];

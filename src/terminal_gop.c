@@ -1,4 +1,5 @@
 #include <terminal_gop.h>
+#include <snake.h>
 
 #define MAX_LINES 50
 #define MAX_COLS 300
@@ -11,6 +12,7 @@ UINTN rows, cols;
 UINTN cursor_x, cursor_y;
 EFI_INPUT_KEY key;
 CHAR16 blankLine[MAX_COLS];
+BOOLEAN runningSnake;
 
 VOID InitializeTerminal(UINT32 *framebuffer, UINTN terminal_width, UINTN terminal_height, UINTN width, UINTN height)
 {
@@ -23,6 +25,7 @@ VOID InitializeTerminal(UINT32 *framebuffer, UINTN terminal_width, UINTN termina
     for (UINTN i = 0; i <= cols; i++)
         blankLine[i] = L' ';
     blankLine[cols + 1] = L'\0';
+    runningSnake = FALSE;
     concat(terminalBuffer[0], L"cmd>");
     draw_line(framebuffer, 0, 0, terminalBuffer[0], 0xFFFFFFFF);
     cursor_x = 4;
@@ -61,6 +64,8 @@ UINTN UpdateTerminal(UINT32 *framebuffer, EFI_SIMPLE_TEXT_INPUT_PROTOCOL *ci)
             if (streq(terminalBuffer[cursor_y] + 4, L"snake"))
             {
                 concat(msg, L"Snake game is executed.");
+                snakeInitialise(framebuffer, fb_width, fb_height);
+                runningSnake = TRUE;
             }
             else if (streq(terminalBuffer[cursor_y] + 4, L"exit"))
             {
