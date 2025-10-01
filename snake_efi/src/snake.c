@@ -1,4 +1,4 @@
-#include <efi.h>
+#include <snake.h>
 
 UINT64 seed = 12740912551;
 UINT32 random()

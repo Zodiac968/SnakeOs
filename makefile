@@ -4,10 +4,12 @@
 SOURCE := $(wildcard src/*.c)
 OBJS := $(SOURCE:.c=.o)
 TARGET = BOOTX64.EFI
+APPLICATIONS := $(wildcard applications/*.EFI)
+APPLICATIONS_ARGS := $(foreach f,$(APPLICATIONS),/EFI/ ../$(f))
 
 ifeq ($(OS), Windows_NT)
 QEMU = qemu.bat
-DISK_FLAGS = -ae /EFI/ VGA8.F16 --vhd
+DISK_FLAGS = -ae $(APPLICATIONS_ARGS) --vhd
 else
 QEMU = ./qemu.sh
 DISK_FLAGS =
@@ -35,6 +37,9 @@ CFLAGS = \
 	-nostdlib \
 	-Iinclude
 
+LDFLAGS = \
+	-L./libs -lcommon
+
 DISK_IMG_FOLDER = /UEFI-GPT-image-creator
 DISK_IMG_PGM    = write_gpt.exe
 
@@ -48,7 +53,7 @@ $(DISK_IMG_FOLDER)/$(DISK_IMG_PGM):
 	cd .$(DISK_IMG_FOLDER) && $(MAKE)
 
 $(TARGET): $(OBJS)
-	$(CC) $(CFLAGS) -o $@ $^
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 	copy $(TARGET) UEFI-GPT-image-creator/$(TARGET)
 	cd .$(DISK_IMG_FOLDER) && $(DISK_IMG_PGM) $(DISK_FLAGS)
 

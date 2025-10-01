@@ -2,6 +2,8 @@
 #define SNAKE_H
 
 #include <efi.h>
+#include <utils.h>
+#include <textRenderer.h>
 
 extern UINT64 seed;
 

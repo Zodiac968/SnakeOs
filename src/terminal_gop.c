@@ -1,5 +1,5 @@
 #include <terminal_gop.h>
-#include <snake.h>
+#include <program.h>
 
 #define MAX_LINES 50
 #define MAX_COLS 300
@@ -53,7 +53,25 @@ VOID DrawBorder(UINT32 *framebuffer, UINT32 color)
     draw_char(framebuffer, fb_width, winWidth + offset_x + 16, winHeight + offset_y + 16, &vgafont[188 * 16], color); // bottom right
 }
 
-UINTN UpdateTerminal(UINT32 *framebuffer, EFI_SIMPLE_TEXT_INPUT_PROTOCOL *ci)
+VOID draw_line(UINT32 *framebuffer, UINTN grid_x, UINTN grid_y, const CHAR16 *str, UINT32 color)
+{
+    UINTN offset_x = fb_width / 2 - winWidth / 2;
+    UINTN offset_y = fb_height / 2 - winHeight / 2;
+    draw_string(framebuffer, fb_width, grid_x * 8 + offset_x, grid_y * 16 + offset_y, str, color);
+}
+
+VOID redraw_terminal(UINT32 *framebuffer)
+{
+    DrawBorder(framebuffer, 0xFFFFFFFF);
+    for (UINTN i = 0; i < rows; i++)
+    {
+        draw_line(framebuffer, 0, i, blankLine, 0xFFFFFFFF);
+        if (i < cursor_y + 1)
+            draw_line(framebuffer, 0, i, terminalBuffer[i], 0xFFFFFFFF);
+    }
+}
+
+UINTN UpdateTerminal(UINT32 *framebuffer, EFI_HANDLE ImageHandle, EFI_BOOT_SERVICES *BS, EFI_SIMPLE_TEXT_INPUT_PROTOCOL *ci)
 {
     UINT32 white = 0xFFFFFFFF;
     if (ci->ReadKeyStroke(ci, &key) == EFI_SUCCESS)
@@ -61,13 +79,7 @@ UINTN UpdateTerminal(UINT32 *framebuffer, EFI_SIMPLE_TEXT_INPUT_PROTOCOL *ci)
         if (key.UnicodeChar == L'\r')
         {
             CHAR16 msg[50];
-            if (streq(terminalBuffer[cursor_y] + 4, L"snake"))
-            {
-                concat(msg, L"Snake game is executed.");
-                snakeInitialise(framebuffer, fb_width, fb_height);
-                runningSnake = TRUE;
-            }
-            else if (streq(terminalBuffer[cursor_y] + 4, L"exit"))
+            if (streq(terminalBuffer[cursor_y] + 4, L"exit"))
             {
                 return 0;
             }
@@ -91,7 +103,22 @@ UINTN UpdateTerminal(UINT32 *framebuffer, EFI_SIMPLE_TEXT_INPUT_PROTOCOL *ci)
             }
             else
             {
-                concat(msg, L"Command not found");
+                EFI_STATUS status;
+                CHAR16 filePath[100] = L"\\EFI\\";
+                concat(filePath, terminalBuffer[cursor_y] + 4);
+                UINTN len = string_length(filePath);
+                if (!streq(filePath + len - 3, L".efi") || !streq(filePath + len - 3, L".EFI"))
+                {
+                    concat(filePath, L".efi");
+                }
+                status = RunEfiApplication(ImageHandle, BS, filePath);
+                if (EFI_ERROR(status))
+                    concat(msg, L"Command not found");
+                else
+                {
+                    redraw_terminal(framebuffer);
+                    concat(msg, L" ");
+                }
             }
             cursor_y++;
             cursor_x = 0;
@@ -134,11 +161,4 @@ UINTN UpdateTerminal(UINT32 *framebuffer, EFI_SIMPLE_TEXT_INPUT_PROTOCOL *ci)
     }
 over:
     return 1;
-}
-
-VOID draw_line(UINT32 *framebuffer, UINTN grid_x, UINTN grid_y, const CHAR16 *str, UINT32 color)
-{
-    UINTN offset_x = fb_width / 2 - winWidth / 2;
-    UINTN offset_y = fb_height / 2 - winHeight / 2;
-    draw_string(framebuffer, fb_width, grid_x * 8 + offset_x, grid_y * 16 + offset_y, str, color);
 }

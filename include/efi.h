@@ -1620,8 +1620,17 @@ typedef struct
     //
     // Image Services
     //
-    void *LoadImage;
-    void *StartImage;
+    EFI_STATUS (*LoadImage)(
+        BOOLEAN BootPolicy,
+        EFI_HANDLE ParentImageHandle,
+        EFI_DEVICE_PATH_PROTOCOL *FilePath,
+        void *SourceBuffer,
+        UINTN SourceSize,
+        EFI_HANDLE *ImageHandle);
+    EFI_STATUS (*StartImage)(
+        EFI_HANDLE ImageHandle,
+        UINTN *ExitDataSize,
+        CHAR16 **ExitData);
     void *Exit;
     void *UnloadImage;
     EFI_EXIT_BOOT_SERVICES ExitBootServices;
