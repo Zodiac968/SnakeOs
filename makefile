@@ -46,6 +46,7 @@ DISK_IMG_PGM    = write_gpt.exe
 all: $(DISK_IMG_FOLDER)/$(DISK_IMG_PGM) $(TARGET)
 	cd .$(DISK_IMG_FOLDER) && $(QEMU)
 	del $(TARGET)
+	cd .$(DISK_IMG_FOLDER) && copy test.vhd ..\build
 	cd .$(DISK_IMG_FOLDER) && del test.hdd
 	cd .$(DISK_IMG_FOLDER) && del test.vhd
 
