@@ -1,6 +1,6 @@
 #include <efi.h>
 #include <snake.h>
-// ==== Function prototypes ====
+// ==== Function prototypes ===
 
 EFI_STATUS
 EFIAPI
@@ -28,17 +28,18 @@ efi_main(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable)
     EFI_INPUT_KEY key;
     snakeInitialise(framebuffer, width, height);
     BOOLEAN runningSnake = TRUE;
+    CHAR16 buf[50];
+    UINTN FPS = 1000000 / 10;
     while (1)
     {
         seed++;
         runningSnake = snakeUpdate(SystemTable->ConIn);
-        for (volatile UINTN d = 0; d < 30000000; d++)
-            ;
         if (!runningSnake)
         {
             snakeClear();
             break;
         }
+        BS->Stall(FPS); // 16.666ms
     }
 
     return EFI_SUCCESS;

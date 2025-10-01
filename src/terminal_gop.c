@@ -107,7 +107,7 @@ UINTN UpdateTerminal(UINT32 *framebuffer, EFI_HANDLE ImageHandle, EFI_BOOT_SERVI
                 CHAR16 filePath[100] = L"\\EFI\\";
                 concat(filePath, terminalBuffer[cursor_y] + 4);
                 UINTN len = string_length(filePath);
-                if (!streq(filePath + len - 3, L".efi") || !streq(filePath + len - 3, L".EFI"))
+                if (!streq(filePath + len - 4, L".efi") && !streq(filePath + len - 4, L".EFI"))
                 {
                     concat(filePath, L".efi");
                 }

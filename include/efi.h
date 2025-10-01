@@ -1571,6 +1571,9 @@ typedef struct
     void *QueryVariableInfo;
 } EFI_RUNTIME_SERVICES;
 
+typedef EFI_STATUS(EFIAPI *EFI_STALL)(
+    UINTN Microseconds);
+
 // EFI_BOOT_SERVICES: UEFI Spec 2.10 section 4.4.1
 typedef struct
 {
@@ -1639,7 +1642,7 @@ typedef struct
     // Miscellaneous Services
     //
     void *GetNextMonotonicCount;
-    void *Stall;
+    EFI_STALL Stall;
     EFI_SET_WATCHDOG_TIMER SetWatchdogTimer;
 
     //
