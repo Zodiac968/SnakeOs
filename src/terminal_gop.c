@@ -12,7 +12,6 @@ UINTN rows, cols;
 UINTN cursor_x, cursor_y;
 EFI_INPUT_KEY key;
 CHAR16 blankLine[MAX_COLS];
-BOOLEAN runningSnake;
 
 VOID InitializeTerminal(UINT32 *framebuffer, UINTN terminal_width, UINTN terminal_height, UINTN width, UINTN height)
 {
@@ -25,7 +24,8 @@ VOID InitializeTerminal(UINT32 *framebuffer, UINTN terminal_width, UINTN termina
     for (UINTN i = 0; i <= cols; i++)
         blankLine[i] = L' ';
     blankLine[cols + 1] = L'\0';
-    runningSnake = FALSE;
+    CHAR16 terminal[] = L"Terminal";
+    draw_string(framebuffer, fb_width, (fb_width - sizeof(terminal) / sizeof(terminal[0]) * 8) / 2, (fb_height - winHeight) / 2 - 32, terminal, 0xFFFFFFFF);
     concat(terminalBuffer[0], L"cmd>");
     draw_line(framebuffer, 0, 0, terminalBuffer[0], 0xFFFFFFFF);
     cursor_x = 4;
@@ -116,6 +116,7 @@ UINTN UpdateTerminal(UINT32 *framebuffer, EFI_HANDLE ImageHandle, EFI_BOOT_SERVI
                     concat(msg, L"Command not found");
                 else
                 {
+                    clearScreen(framebuffer, fb_width, fb_height, 0x00000000);
                     redraw_terminal(framebuffer);
                     concat(msg, L" ");
                 }
