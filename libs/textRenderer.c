@@ -1,5 +1,16 @@
 #include <textRenderer.h>
 
+void clearScreen(UINT32 *framebuffer, UINTN fb_width, UINTN fb_height, UINT32 color)
+{
+    for (UINTN row = 0; row < fb_height; row++)
+    {
+        for (UINTN col = 0; col < fb_width; col++)
+        {
+            framebuffer[(row * fb_width) + col] = color;
+        }
+    }
+}
+
 void draw_char(UINT32 *framebuffer, UINTN fb_width, UINTN x, UINTN y, unsigned char *glyph, UINT32 color)
 {
     for (int row = 0; row < 16; row++)
